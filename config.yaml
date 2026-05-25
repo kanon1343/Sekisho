@@ -1,0 +1,13 @@
+server:
+  port: "4180"
+
+oauth2:
+  provider_url: "http://localhost:8080/realms/sekisho"
+  client_id: "sekisho-proxy"
+  redirect_url: "https://localhost:4180/oauth2/callback"
+
+session:
+  cookie_name: "_sekisho_session"
+  cookie_domain: "localhost"
+  cookie_secure: true
+  cookie_http_only: true
