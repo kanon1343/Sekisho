@@ -4,5 +4,6 @@ go 1.23.3
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
+	golang.org/x/crypto v0.31.0
 	gopkg.in/yaml.v3 v3.0.1
 )
