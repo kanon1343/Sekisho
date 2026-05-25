@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # Keycloak: 認証・認可サーバー
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
     command: start-dev --import-realm
@@ -9,13 +10,14 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
 
+  # Echo Server: サンプルアップストリームサーバー
   echo-server:
     image: ealen/echo-server:latest
     ports:
-      - "8081:80"
+      - '8081:80'
     environment:
       - PORT=80
