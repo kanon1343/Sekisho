@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -13,7 +14,9 @@ import (
 
 // Config represents the server configuration.
 type Config struct {
-	Port int
+	Port     int
+	CertFile string
+	KeyFile  string
 }
 
 // Run starts the HTTP server and handles graceful shutdown.
@@ -24,6 +27,9 @@ func Run(ctx context.Context, cfg Config) error {
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: router,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
 	}
 
 	// Create a channel to listen for OS signals
@@ -36,7 +42,13 @@ func Run(ctx context.Context, cfg Config) error {
 	// Start the server in a goroutine
 	go func() {
 		fmt.Printf("Starting server on %s\n", addr)
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		var err error
+		if cfg.CertFile == "" && cfg.KeyFile == "" {
+			err = srv.ListenAndServe()
+		} else {
+			err = srv.ListenAndServeTLS(cfg.CertFile, cfg.KeyFile)
+		}
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			serverErrors <- err
 		}
 	}()

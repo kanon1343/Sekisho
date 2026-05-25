@@ -1,0 +1,34 @@
+{
+  "realm": "sekisho",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "sekisho-proxy",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "sekisho-client-secret",
+      "redirectUris": [
+        "https://localhost:4180/oauth2/callback"
+      ],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "email": "testuser@example.com",
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
