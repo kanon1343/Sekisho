@@ -1,17 +1,23 @@
 package main
 
 import (
-	"crypto/tls"
+	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"strconv"
+
+	"sekisho/internal/server"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "4180"
+	portStr := os.Getenv("PORT")
+	if portStr == "" {
+		portStr = "4180"
+	}
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatalf("Invalid PORT environment variable: %v", err)
 	}
 
 	certFile := os.Getenv("TLS_CERT_FILE")
@@ -24,23 +30,18 @@ func main() {
 		keyFile = "certs/localhost-key.pem"
 	}
 
-	fmt.Printf("Sekisho OAuth2 Proxy starting on https://localhost:%s...\n", port)
+	fmt.Printf("Sekisho OAuth2 Proxy starting on https://localhost:%d...\n", port)
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Sekisho Proxy is running\n")
-	})
+	// Create a root context
+	ctx := context.Background()
 
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: mux,
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS12,
-		},
+	cfg := server.Config{
+		Port:     port,
+		CertFile: certFile,
+		KeyFile:  keyFile,
 	}
 
-	err := server.ListenAndServeTLS(certFile, keyFile)
-	if err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+	if err := server.Run(ctx, cfg); err != nil {
+		log.Fatalf("Server failed: %v", err)
 	}
 }

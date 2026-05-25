@@ -89,3 +89,8 @@ session:
 				return
 			}
 			if !tt.wantErr && tt.check != nil {
+				tt.check(t, cfg)
+			}
+		})
+	}
+}

@@ -89,7 +89,7 @@ func (s *Store) Set(w http.ResponseWriter, sess *Session) error {
 		return err
 	}
 
-	encoded := base64.RawURLEncoding.EncodeString(ciphertext)
+	encoded := base64.RawURLEncoding.EncodeToString(ciphertext)
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     CookieName,
